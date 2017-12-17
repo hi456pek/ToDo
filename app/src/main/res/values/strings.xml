@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">ToDo</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="com_auth0_client_id">gCXnNoCaa4x1203E5bKpM785YpR0XkrF</string>
+    <string name="com_auth0_domain">mevario.eu.auth0.com</string>
+
+    <string name="title_activity_task_list">Task list</string>
+
+    <string name="add_button">ADD</string>
+    <string name="add_button_plus">+</string>
+    <string name="task_title_field">Title</string>
+    <string name="comment_field">Comment</string>
+
+
+    <string name="action_settings">Settings</string>
+</resources>
