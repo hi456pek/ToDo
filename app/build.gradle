@@ -10,7 +10,6 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [auth0Domain: "@string/com_auth0_domain", auth0Scheme: "demo"]
-        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {

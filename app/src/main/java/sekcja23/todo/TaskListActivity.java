@@ -1,4 +1,4 @@
-package sekcja23.todo.Activity;
+package sekcja23.todo;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -2,27 +2,30 @@
     <string name="app_name">ToDo</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="com_auth0_lock_action_sign_up">Zarejestruj</string>
+    <string name="com_auth0_lock_action_log_in">Zaloguj</string>
+    <string name="com_auth0_lock_forms_separator">Klasyczne logowanie:</string>
+    <string name="com_auth0_lock_mode_sign_up">Rejestracja</string>
+    <string name="com_auth0_lock_mode_log_in">Logowanie</string>
+    <string name="com_auth0_lock_action_forgot_password">Zapomniałeś hasła?</string>
+    <string name="com_auth0_lock_hint_email">Email</string>
+    <string name="com_auth0_lock_hint_password">Hasło</string>
+    <string name="com_auth0_lock_sign_up_terms">Rejestrując się akceptujesz politykę prywatności aplikacji</string>
+
     <string name="com_auth0_client_id">gCXnNoCaa4x1203E5bKpM785YpR0XkrF</string>
     <string name="com_auth0_domain">mevario.eu.auth0.com</string>
+    <string name="app_title">ToDo</string>
+    <string name="title_activity_home">ToDo Sekcja_23</string>
 
-    <string name="title_activity_task_list">Task list</string>
+    <string name="navigation_drawer_open">Otwórz menu boczne</string>
+    <string name="navigation_drawer_close">Zamknij menu boczne</string>
 
-    <string name="add_button">ADD</string>
+    <string name="action_settings">Ustawienia</string>
+
+    <string name="title_activity_task_list">Lista zadań</string>
+
+    <string name="add_button">DODAJ</string>
     <string name="add_button_plus">+</string>
-    <string name="task_title_field">Title</string>
-    <string name="comment_field">Comment</string>
-
-
-    <string name="action_settings">Settings</string>
+    <string name="task_title_field">Tytuł</string>
+    <string name="comment_field">Skomentuj</string>
 </resources>

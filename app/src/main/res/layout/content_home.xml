@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sekcja23.todo.Activity.MainActivity">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="sekcja23.todo.HomeActivity"
+    tools:showIn="@layout/app_bar_home">
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="142dp"
-        android:layout_height="41dp"
+        android:layout_width="213dp"
+        android:layout_height="102dp"
         android:text="Zalogowano!"
         android:textAlignment="center"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="121dp"
+        tools:layout_editor_absoluteX="86dp"
         tools:layout_editor_absoluteY="16dp" />
+
 </android.support.constraint.ConstraintLayout>
