@@ -14,11 +14,40 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import sekcja23.todo.Models.JournalEntry;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    //Referencja do bazy
+    private DatabaseReference mDatabase;
+
+    //Referencja do czegoś w rodzaju tabeli w bazie
+    private DatabaseReference journalCloudEndPoint;
+
+    //Metoda seed
+    private void addInitialDataToFirebase() {
+        List<JournalEntry> sampleJournalEntries = JournalEntry.getSampleJournalEntries();
+        for (JournalEntry journalEntry : sampleJournalEntries) {
+            String key = journalCloudEndPoint.push().getKey();
+            journalEntry.setJournalId(key);
+            journalCloudEndPoint.child(key).setValue(journalEntry);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +55,37 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Instancja bazy
+        mDatabase =  FirebaseDatabase.getInstance().getReference();
+
+        //Instancja czegoś w rodzaju tabeli w bazie
+        journalCloudEndPoint = mDatabase.child("journalentris");
+
+        //Dodanie początkowego zadania do bazy - już zrobione dlatego zakomentowane
+        //addInitialDataToFirebase();
+
+        //Pobieranie danych
+        journalCloudEndPoint.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                    JournalEntry note = noteSnapshot.getValue(JournalEntry.class);
+
+                    //Dodanie pobranych zadań do listy
+                    List<JournalEntry> journalEntries = new ArrayList<>();
+                    journalEntries.add(note);
+
+                    //Nie wiem jeszcze jak wyświetlać liste, pewnie trzeba to podpiąć jakoś do ListView
+                }
+            }
+
+            //Metoda do celów diagnostycznych
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
