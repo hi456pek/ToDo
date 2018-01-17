@@ -1,5 +1,6 @@
 package sekcja23.todo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import sekcja23.todo.Adapters.JournalAdapter;
 import sekcja23.todo.Models.JournalEntry;
 
 public class HomeActivity extends AppCompatActivity
@@ -38,6 +40,9 @@ public class HomeActivity extends AppCompatActivity
 
     //Referencja do czegoś w rodzaju tabeli w bazie
     private DatabaseReference journalCloudEndPoint;
+
+    //Lista wpisów
+    private ArrayList<JournalEntry> journalEntries;
 
     //Metoda seed
     private void addInitialDataToFirebase() {
@@ -62,8 +67,17 @@ public class HomeActivity extends AppCompatActivity
         //Instancja czegoś w rodzaju tabeli w bazie
         journalCloudEndPoint = mDatabase.child("journalentris");
 
-        //Dodanie początkowego zadania do bazy - już zrobione dlatego zakomentowane
+        //Dodanie początkowego zadania do bazy - już zrobione dlatego zakomentowane. Nie odkomentowywać.
         //addInitialDataToFirebase();
+
+        //Referencja na ListView z zadaniami w widoku
+        final ListView journalsList = (ListView) findViewById(R.id.journalsList);
+
+        //Kontekst tego widoku na potrzeby ListView
+        final Context cont = this;
+
+        //Incijalizacja listy na potrzeby wyświetlania w widoku
+        journalEntries = new ArrayList<>();
 
         //Pobieranie danych
         journalCloudEndPoint.addValueEventListener(new ValueEventListener() {
@@ -74,10 +88,11 @@ public class HomeActivity extends AppCompatActivity
                     JournalEntry note = noteSnapshot.getValue(JournalEntry.class);
 
                     //Dodanie pobranych zadań do listy
-                    List<JournalEntry> journalEntries = new ArrayList<>();
                     journalEntries.add(note);
 
-                    //Nie wiem jeszcze jak wyświetlać liste, pewnie trzeba to podpiąć jakoś do ListView
+                    //Wyświetlenie zadań w ListView
+                    ArrayAdapter adapter = new JournalAdapter(cont, R.layout.journal_item, journalEntries);
+                    journalsList.setAdapter(adapter);
                 }
             }
 
@@ -107,8 +122,6 @@ public class HomeActivity extends AppCompatActivity
 
         Intent myIntent = getIntent(); // gets the previously created intent
         String userEmail = myIntent.getStringExtra("userEmail");
-        TextView loginInfoTextView = findViewById(R.id.textView);
-        loginInfoTextView.setText("Zalogowano jako: "+userEmail);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 

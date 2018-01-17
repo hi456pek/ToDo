@@ -8,14 +8,13 @@
     tools:context="sekcja23.todo.HomeActivity"
     tools:showIn="@layout/app_bar_home">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="213dp"
-        android:layout_height="102dp"
-        android:text="Zalogowano!"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        tools:layout_editor_absoluteX="86dp"
-        tools:layout_editor_absoluteY="16dp" />
+    <ListView
+        android:id="@+id/journalsList"
+        android:layout_width="match_parent"
+        android:layout_height="512dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

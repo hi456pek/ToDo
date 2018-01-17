@@ -48,6 +48,13 @@ public class JournalEntry {
     public void setContent(String content) {
         this.content = content;
     }
+
+    //Gettery
+    public String getJournalId() { return this.journalId; }
+
+    public String getTitle() { return this.title; }
+
+    public String getContent() { return this.content; }
 }
 
 
