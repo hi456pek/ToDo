@@ -4,19 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,9 +30,15 @@ import java.util.List;
 
 import sekcja23.todo.Adapters.JournalAdapter;
 import sekcja23.todo.Models.JournalEntry;
+import sekcja23.todo.TaskActivities.AddNewTaskActivity;
+import sekcja23.todo.TaskActivities.TaskDetailsActivity;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String DATABASE_TABLE = "journalentris";
+    private static final String TASK_ID = "TaskId";
+    private static final String EMAIL_ADDRES = "userEmail";
 
     //Referencja do bazy
     private DatabaseReference mDatabase;
@@ -58,20 +63,20 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //Instancja bazy
-        mDatabase =  FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //Instancja czegoś w rodzaju tabeli w bazie
-        journalCloudEndPoint = mDatabase.child("journalentris");
+        journalCloudEndPoint = mDatabase.child(DATABASE_TABLE);
 
         //Dodanie początkowego zadania do bazy - już zrobione dlatego zakomentowane. Nie odkomentowywać.
         //addInitialDataToFirebase();
 
         //Referencja na ListView z zadaniami w widoku
-        final ListView journalsList = (ListView) findViewById(R.id.journalsList);
+        final ListView journalsList = (findViewById(R.id.journalsList));
 
         //Kontekst tego widoku na potrzeby ListView
         final Context cont = this;
@@ -84,7 +89,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot noteSnapshot: dataSnapshot.getChildren()){
+                for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
                     JournalEntry note = noteSnapshot.getValue(JournalEntry.class);
 
                     //Dodanie pobranych zadań do listy
@@ -102,31 +107,34 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               /* Snackbar.make(view, "Dodawanie nowego zadania", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-
-                Intent nextScreen = new Intent(getApplicationContext(), AddNewTaskActivity.class);
-                startActivityForResult(nextScreen, 100);
-            }
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener((View v) -> {
+            Intent nextScreen = new Intent(getApplicationContext(), AddNewTaskActivity.class);
+            startActivity(nextScreen);
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        journalsList.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
+            Log.i("Position => ", Integer.toString(position));
+            JournalEntry entry = (JournalEntry) journalsList.getItemAtPosition(position);
+            Intent nextScreen = new Intent(getApplicationContext(), TaskDetailsActivity.class);
+            Log.i("Journal Entry ID => ", entry.getJournalId());
+            nextScreen.putExtra(TASK_ID, entry.getJournalId());
+            startActivityForResult(nextScreen, 100);
+        });
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        Intent myIntent = getIntent(); // gets the previously created intent
-        String userEmail = myIntent.getStringExtra("userEmail");
+        Intent myIntent = getIntent();
+        String userEmail = myIntent.getStringExtra(EMAIL_ADDRES);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
         View hView = navigationView.getHeaderView(0);
-        TextView nav_user = (TextView)hView.findViewById(R.id.userEmailTextView);
+        TextView nav_user = hView.findViewById(R.id.userEmailTextView);
         nav_user.setText(userEmail);
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -134,7 +142,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -182,8 +190,9 @@ public class HomeActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

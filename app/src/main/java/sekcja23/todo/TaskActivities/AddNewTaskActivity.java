@@ -1,8 +1,8 @@
-package sekcja23.todo;
+package sekcja23.todo.TaskActivities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import sekcja23.todo.HomeActivity;
 import sekcja23.todo.Models.JournalEntry;
 import sekcja23.todo.R;
 
@@ -33,7 +34,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
         journalCloudEndPoint = mDatabase.child("journalentris");
 
         //Obsługa przycisku dodawania nowego zadania
-        final Button button = (Button) findViewById(R.id.button6);
+        final Button button = (Button) findViewById(R.id.addButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -44,10 +45,10 @@ public class AddNewTaskActivity extends AppCompatActivity {
                 JournalEntry journalEntry = new JournalEntry();
 
                 //Pobranie tekstu z pola edycyjnego z tytułem zadnia
-                EditText titleEdit   = (EditText)findViewById(R.id.editText);
+                EditText titleEdit = (EditText) findViewById(R.id.titleField);
 
                 //Pobranie tekstu z pola edycyjnego z opisem zadania
-                EditText contentEdit =  (EditText)findViewById(R.id.editText2);
+                EditText contentEdit = (EditText) findViewById(R.id.commentField);
 
                 //Inicjalizacja obiektu poprzez settery
                 journalEntry.setTitle(titleEdit.getText().toString());

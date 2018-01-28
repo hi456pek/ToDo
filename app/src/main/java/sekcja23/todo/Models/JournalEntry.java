@@ -3,7 +3,9 @@ package sekcja23.todo.Models;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by mwojtowicz on 11.01.2018.
@@ -11,12 +13,17 @@ import java.util.List;
 
 //Model tabeli w bazie
 public class JournalEntry {
-    public String journalId;
-    public String title;
-    public String content;
-    public long dateCreated;
-    public long dateModified;
-    public String userId;
+    private String journalId;
+    private String title;
+    private String content;
+    private long dateCreated;
+    private long dateModified;
+    private String userId;
+
+    private PositionOnMap positionOnMap;
+
+    private List<Remainder> remainderList;
+    private List<FileResource> resourceList;
 
     //Seed prostego dziennika zadań
     public static List<JournalEntry> getSampleJournalEntries() {
@@ -55,6 +62,16 @@ public class JournalEntry {
     public String getTitle() { return this.title; }
 
     public String getContent() { return this.content; }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("journalId", journalId);
+        result.put("title", title);
+        result.put("content", content);
+        result.put("dateModified", dateModified);
+
+        return result;
+    }
 }
 
 

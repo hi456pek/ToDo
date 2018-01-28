@@ -29,11 +29,11 @@
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".TaskListActivity"
+            android:name=".TaskActivities.TaskListActivity"
             android:label="@string/title_activity_task_list"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AddNewTaskActivity" />
-        <activity android:name=".TaskDetailsActivity"></activity>
+        <activity android:name=".TaskActivities.AddNewTaskActivity" />
+        <activity android:name=".TaskActivities.TaskDetailsActivity" />
     </application>
 
 </manifest>

@@ -28,4 +28,7 @@
     <string name="add_button_plus">+</string>
     <string name="task_title_field">Tytuł</string>
     <string name="comment_field">Skomentuj</string>
+
+    <string name="modify_button">Modyfikuj</string>
+    <string name="save_button">Zapisz</string>
 </resources>

@@ -4,22 +4,32 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="MyTheme" parent="Lock.Theme">
-        <item name="Auth0.HeaderLogo">@drawable/com_auth0_lock_header_logo</item>
+        <item name="Auth0.HeaderLogo">@drawable/fui_done_check_mark</item>
         <item name="Auth0.HeaderTitle">@string/app_title</item>
-        <item name="Auth0.HeaderTitleColor">@color/com_auth0_lock_text</item>
-        <item name="Auth0.HeaderBackground">@color/com_auth0_lock_header_background</item>
-        <item name="Auth0.PrimaryColor">@color/com_auth0_lock_submit_normal</item>
-        <item name="Auth0.DarkPrimaryColor">@color/com_auth0_lock_submit_pressed</item>
+        <item name="Auth0.HeaderTitleColor">@color/colorPrimary</item>
+        <item name="Auth0.HeaderBackground">@color/colorSecondary</item>
+        <item name="Auth0.PrimaryColor">@color/colorPrimary</item>
+        <item name="Auth0.DarkPrimaryColor">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Lock.Theme.AuthStyle.Facebook">
+        <item name="Auth0.BackgroundColor">@color/colorPrimary</item>
+        <item name="Auth0.PrimaryColor">@color/colorSecondary</item>
+        <item name="Auth0.Logo">@drawable/com_auth0_lock_ic_social_facebook</item>
+    </style>
+
+    <style name="Lock.Theme.AuthStyle.GoogleOAuth2">
+        <item name="Auth0.BackgroundColor">@color/colorPrimary</item>
+        <item name="Auth0.PrimaryColor">@color/colorSecondary</item>
+        <item name="Auth0.Logo">@drawable/com_auth0_lock_ic_social_google_oauth2</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
