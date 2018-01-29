@@ -24,11 +24,16 @@
 
     <string name="title_activity_task_list">Lista zadań</string>
 
-    <string name="add_button">DODAJ</string>
+    <string name="add_button">Dodaj</string>
     <string name="add_button_plus">+</string>
+    <string name="remove_button">Usuń</string>
+
     <string name="task_title_field">Tytuł</string>
     <string name="comment_field">Skomentuj</string>
 
     <string name="modify_button">Modyfikuj</string>
     <string name="save_button">Zapisz</string>
+
+    <string name="remainder_dialog_title">Dodaj przypominacz</string>
+    <string name="cancel_button">Anuluj</string>
 </resources>

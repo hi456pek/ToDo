@@ -7,7 +7,7 @@
     </style>
 
     <style name="MyTheme" parent="Lock.Theme">
-        <item name="Auth0.HeaderLogo">@drawable/fui_done_check_mark</item>
+        <item name="Auth0.HeaderLogo">@drawable/ic_check_green_48dp</item>
         <item name="Auth0.HeaderTitle">@string/app_title</item>
         <item name="Auth0.HeaderTitleColor">@color/colorPrimary</item>
         <item name="Auth0.HeaderBackground">@color/colorSecondary</item>
