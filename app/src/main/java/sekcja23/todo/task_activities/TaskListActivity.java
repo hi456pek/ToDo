@@ -1,4 +1,4 @@
-package sekcja23.todo.TaskActivities;
+package sekcja23.todo.task_activities;
 
 import android.content.Intent;
 import android.os.Bundle;

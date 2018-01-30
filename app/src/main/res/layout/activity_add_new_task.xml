@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sekcja23.todo.TaskActivities.AddNewTaskActivity"
+    tools:context="sekcja23.todo.task_activities.AddNewTaskActivity"
     tools:layout_editor_absoluteY="81dp">
 
     <LinearLayout
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/colorSecondary"
-            android:src="@drawable/ic_add_location_green_24dp"
+            app:srcCompat="@drawable/ic_add_location_green_24dp"
             app:layout_constraintEnd_toStartOf="@+id/addRemainder"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/colorSecondary"
-            android:src="@drawable/ic_add_alert_green_24dp"
+            app:srcCompat="@drawable/ic_add_alert_green_24dp"
             app:layout_constraintBottom_toTopOf="@+id/titleField"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/colorSecondary"
-            android:src="@drawable/ic_camera_alt_green_24dp"
+            app:srcCompat="@drawable/ic_camera_alt_green_24dp"
             app:layout_constraintBottom_toTopOf="@+id/titleField"
             app:layout_constraintEnd_toStartOf="@+id/addVoiceNote"
             app:layout_constraintTop_toTopOf="parent" />
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/colorSecondary"
-            android:src="@drawable/ic_audiotrack_green_24dp"
+            app:srcCompat="@drawable/ic_audiotrack_green_24dp"
             app:layout_constraintBottom_toTopOf="@+id/titleField"
             app:layout_constraintEnd_toStartOf="@+id/addPlace"
             app:layout_constraintStart_toStartOf="parent"

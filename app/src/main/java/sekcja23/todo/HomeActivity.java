@@ -30,8 +30,8 @@ import java.util.List;
 
 import sekcja23.todo.Adapters.JournalAdapter;
 import sekcja23.todo.Models.JournalEntry;
-import sekcja23.todo.TaskActivities.AddNewTaskActivity;
-import sekcja23.todo.TaskActivities.TaskDetailsActivity;
+import sekcja23.todo.task_activities.AddNewTaskActivity;
+import sekcja23.todo.task_activities.TaskDetailsActivity;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
