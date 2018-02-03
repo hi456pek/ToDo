@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -108,6 +109,11 @@ public class PhotoActivity extends AppCompatActivity {
         journalEntry.setTitle("Notatka zdjęciowa");
         journalEntry.setContent("ToDo_" + timeStamp + ".jpg");
         journalEntry.setJournalId(key);
+
+        SharedPreferences settings = getApplicationContext().getSharedPreferences("ToDoPreferences", 0);
+        String currentUserId = settings.getString("CurrentUser", "");
+
+        journalEntry.setUserId(currentUserId);
 
         //Dodanie obiektu do bazy
         journalCloudEndPoint.child(key).setValue(journalEntry);
