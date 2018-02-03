@@ -3,6 +3,7 @@ package sekcja23.todo;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -106,13 +107,18 @@ public class HomeActivity extends AppCompatActivity
         //Pobieranie danych
         journalCloudEndPoint.addValueEventListener(new ValueEventListener() {
 
+            SharedPreferences settings = getApplicationContext().getSharedPreferences("ToDoPreferences", 0);
+            String currentUserId = settings.getString("CurrentUser", "");
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
                     JournalEntry note = noteSnapshot.getValue(JournalEntry.class);
 
-                    //Dodanie pobranych zadań do listy
-                    journalEntries.add(note);
+                    if(note.getUserId() != null && note.getUserId().equals(currentUserId)) {
+                        //Dodanie pobranych zadań do listy
+                        journalEntries.add(note);
+                    }
 
                     //Wyświetlenie zadań w ListView
                     ArrayAdapter adapter = new JournalAdapter(cont, R.layout.journal_item, journalEntries);
@@ -126,19 +132,22 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        //Obsługa dotknięcia przycisku dodawania zadania
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener((View v) -> {
             Intent nextScreen = new Intent(getApplicationContext(), AddNewTaskActivity.class);
             startActivity(nextScreen);
         });
 
+        //Obsługa dotknięcia elementu listy
         journalsList.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
-            Log.i("Position => ", Integer.toString(position));
             JournalEntry entry = (JournalEntry) journalsList.getItemAtPosition(position);
-            Intent nextScreen = new Intent(getApplicationContext(), TaskDetailsActivity.class);
-            Log.i("Journal Entry ID => ", entry.getJournalId());
-            nextScreen.putExtra(TASK_ID, entry.getJournalId());
-            startActivityForResult(nextScreen, 100);
+
+            if(entry != null) {
+                Intent nextScreen = new Intent(getApplicationContext(), TaskDetailsActivity.class);
+                nextScreen.putExtra(TASK_ID, entry.getJournalId());
+                startActivityForResult(nextScreen, 100);
+            }
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -245,31 +254,6 @@ public class HomeActivity extends AppCompatActivity
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
-    }
-
-    //Metoda do pobierania zdjęcia z pamięci telefonu
-    private void loadImageFromStorage(String path)
-    {
-        try {
-            File f=new File(path, "todo.jpg");
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
-            //ImageView img=(ImageView)findViewById(R.id.imgPicker);
-            //img.setImageBitmap(b);
-            Intent nextScreen = new Intent(getApplicationContext(), PhotoActivity.class);
-
-            //Compress bitmap
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            b.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] bytes = stream.toByteArray();
-
-            nextScreen.putExtra("imageBitmapCompressed", bytes);
-            startActivity(nextScreen);
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-
     }
 
     @Override

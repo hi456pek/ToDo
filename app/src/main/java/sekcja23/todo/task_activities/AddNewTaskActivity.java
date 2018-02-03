@@ -2,6 +2,7 @@ package sekcja23.todo.task_activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -109,6 +110,11 @@ public class AddNewTaskActivity extends AppCompatActivity {
             journalEntry.setTitle(this.titleField.getText().toString());
             journalEntry.setContent(this.commentField.getText().toString());
             journalEntry.setJournalId(key);
+
+            SharedPreferences settings = getApplicationContext().getSharedPreferences("ToDoPreferences", 0);
+            String currentUserId = settings.getString("CurrentUser", "");
+
+            journalEntry.setUserId(currentUserId);
 
             //Dodanie obiektu do bazy
             journalCloudEndPoint.child(key).setValue(journalEntry);

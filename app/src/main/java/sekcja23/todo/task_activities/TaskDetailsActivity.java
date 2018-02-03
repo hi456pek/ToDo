@@ -1,8 +1,13 @@
 package sekcja23.todo.task_activities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,10 +17,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.GregorianCalendar;
 
 import sekcja23.todo.HomeActivity;
 import sekcja23.todo.Models.JournalEntry;
+import sekcja23.todo.PhotoActivity;
+import sekcja23.todo.PhotoDetailActivity;
 import sekcja23.todo.R;
 
 public class TaskDetailsActivity extends AddNewTaskActivity {
@@ -90,13 +101,15 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
                 newModel.setTitle(this.titleField.getText().toString());
 
                 this.referenceToModel.updateChildren(newModel.toMap());
-                this.finishActivity();
+                Intent nextScreen = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(nextScreen);
             });
         });
 
         this.removeButton.setOnClickListener((View v) -> {
             this.referenceToModel.removeValue();
-            this.finishActivity();
+            Intent nextScreen = new Intent(getApplicationContext(), HomeActivity.class);
+            startActivity(nextScreen);
         });
     }
 
@@ -106,8 +119,44 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
     }
 
     protected void fillEditText() {
-        this.titleField.setText(this.taskDetailsModel.getTitle());
-        this.commentField.setText(this.taskDetailsModel.getContent());
+        if(this.taskDetailsModel.getContent().contains(".jpg"))
+        {
+            loadImageFromStorage(this.taskDetailsModel.getContent());
+        }
+        else
+        {
+            this.titleField.setText(this.taskDetailsModel.getTitle());
+            this.commentField.setText(this.taskDetailsModel.getContent());
+        }
+    }
+
+    //Metoda do pobierania zdjęcia z pamięci telefonu
+    private void loadImageFromStorage(String fileName)
+    {
+        try {
+            ContextWrapper cw = new ContextWrapper(getApplicationContext());
+            // path to /data/data/yourapp/app_data/imageDir
+            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+
+            File f=new File(directory, fileName);
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+
+            Intent nextScreen = new Intent(getApplicationContext(), PhotoDetailActivity.class);
+
+            //Compress bitmap
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            b.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] bytes = stream.toByteArray();
+
+            nextScreen.putExtra("imageBitmapCompressed", bytes);
+            this.finishActivity();
+            startActivity(nextScreen);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

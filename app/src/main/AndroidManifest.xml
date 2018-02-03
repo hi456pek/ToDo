@@ -41,6 +41,10 @@
         <activity android:name=".task_activities.AddNewTaskActivity" />
         <activity android:name=".task_activities.TaskDetailsActivity" />
         <activity android:name=".PhotoActivity" />
+        <activity
+            android:name=".PhotoDetailActivity"
+            android:label="@string/title_activity_photo_detail"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
