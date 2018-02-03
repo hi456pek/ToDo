@@ -170,6 +170,7 @@ public class PhotoActivity extends AppCompatActivity {
     private void handleCamera()
     {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra("android.intent.extra.quickCapture",true);
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
