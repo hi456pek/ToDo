@@ -63,6 +63,7 @@ public class PhotoActivity extends AppCompatActivity {
     }
 
     private String saveToInternalStorage(Bitmap bitmapImage){
+
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);

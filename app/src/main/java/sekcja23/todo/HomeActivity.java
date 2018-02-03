@@ -54,6 +54,11 @@ public class HomeActivity extends AppCompatActivity
     private static final String TASK_ID = "TaskId";
     private static final String EMAIL_ADDRES = "userEmail";
 
+    //Zmienne na potrzeby obsługi aparatu
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private Bitmap mImageBitmap;
+    private String mCurrentPhotoPath;
+
     //Referencja do bazy
     private DatabaseReference mDatabase;
 
@@ -193,10 +198,20 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            takePictureIntent.putExtra("android.intent.extra.quickCapture",true);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(takePictureIntent, 1);
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                // Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+                    // Error occurred while creating the File
+                }
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                    startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+                }
             }
         } else if (id == R.id.nav_slideshow) {
             Intent nextScreen = new Intent(getApplicationContext(), HomeActivity.class);
@@ -212,6 +227,24 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    //Create temporary image file
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  // prefix
+                ".jpg",         // suffix
+                storageDir      // directory
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
     }
 
     //Metoda do pobierania zdjęcia z pamięci telefonu
@@ -241,19 +274,23 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            Intent nextScreen = new Intent(getApplicationContext(), PhotoActivity.class);
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            try {
+                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
 
-            //Compress bitmap
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] bytes = stream.toByteArray();
+                //Compress bitmap
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] bytes = stream.toByteArray();
 
-            nextScreen.putExtra("imageBitmapCompressed", bytes);
-            startActivity(nextScreen);
+                //Open preview
+                Intent nextScreen = new Intent(getApplicationContext(), PhotoActivity.class);
+                nextScreen.putExtra("imageBitmapCompressed", bytes);
+                startActivity(nextScreen);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
-
 }
