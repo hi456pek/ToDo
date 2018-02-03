@@ -1,23 +1,18 @@
 package sekcja23.todo;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,10 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import sekcja23.todo.Adapters.JournalAdapter;
@@ -103,6 +95,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                journalEntries = new ArrayList<>();
                 for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
                     JournalEntry note = noteSnapshot.getValue(JournalEntry.class);
 
@@ -110,9 +103,9 @@ public class HomeActivity extends AppCompatActivity
                     journalEntries.add(note);
 
                     //Wyświetlenie zadań w ListView
-                    ArrayAdapter adapter = new JournalAdapter(cont, R.layout.journal_item, journalEntries);
-                    journalsList.setAdapter(adapter);
                 }
+                ArrayAdapter adapter = new JournalAdapter(cont, R.layout.journal_item, journalEntries);
+                journalsList.setAdapter(adapter);
             }
 
             //Metoda do celów diagnostycznych
@@ -128,12 +121,13 @@ public class HomeActivity extends AppCompatActivity
         });
 
         journalsList.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
-            Log.i("Position => ", Integer.toString(position));
             JournalEntry entry = (JournalEntry) journalsList.getItemAtPosition(position);
             Intent nextScreen = new Intent(getApplicationContext(), TaskDetailsActivity.class);
-            Log.i("Journal Entry ID => ", entry.getJournalId());
-            nextScreen.putExtra(TASK_ID, entry.getJournalId());
+            if (entry.getJournalId() != null) {
+                nextScreen.putExtra(TASK_ID, entry.getJournalId());
+            }
             startActivityForResult(nextScreen, 100);
+
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -194,7 +188,7 @@ public class HomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            takePictureIntent.putExtra("android.intent.extra.quickCapture",true);
+            takePictureIntent.putExtra("android.intent.extra.quickCapture", true);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(takePictureIntent, 1);
             }
@@ -215,10 +209,9 @@ public class HomeActivity extends AppCompatActivity
     }
 
     //Metoda do pobierania zdjęcia z pamięci telefonu
-    private void loadImageFromStorage(String path)
-    {
+    private void loadImageFromStorage(String path) {
         try {
-            File f=new File(path, "todo.jpg");
+            File f = new File(path, "todo.jpg");
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
             //ImageView img=(ImageView)findViewById(R.id.imgPicker);
             //img.setImageBitmap(b);
@@ -231,9 +224,7 @@ public class HomeActivity extends AppCompatActivity
 
             nextScreen.putExtra("imageBitmapCompressed", bytes);
             startActivity(nextScreen);
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 

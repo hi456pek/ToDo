@@ -3,7 +3,6 @@ package sekcja23.todo.task_activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -64,7 +63,6 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
 
     protected void initTaskData() {
         String taskId = getIntent().getStringExtra(TASK_ID);
-        Log.i("TaskID => ", taskId);
         if (taskId != null)
             this.referenceToModel.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

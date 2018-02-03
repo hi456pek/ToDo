@@ -41,7 +41,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".task_activities.AddNewTaskActivity" />
         <activity android:name=".task_activities.TaskDetailsActivity" />
-        <activity android:name=".PhotoActivity"></activity>
+        <activity android:name=".PhotoActivity" />
     </application>
 
 </manifest>

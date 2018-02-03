@@ -35,5 +35,7 @@
     <string name="save_button">Zapisz</string>
 
     <string name="remainder_dialog_title">Dodaj przypominacz</string>
+    <string name="get_date">Wybierz datę</string>
+    <string name="get_time">Wybrierz godzinę</string>
     <string name="cancel_button">Anuluj</string>
 </resources>

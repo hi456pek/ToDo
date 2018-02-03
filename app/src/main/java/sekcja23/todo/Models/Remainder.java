@@ -1,20 +1,21 @@
 package sekcja23.todo.Models;
 
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class Remainder {
+    protected static final String REMAINDER_DATABASE_TABLE = "remainders";
 
+    private String remainderId;
     private String journalId;
     private long date;
 
+    public Remainder(Calendar date, String journalId) {
 
-    public Remainder(Date date, String journalId) {
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(date);
-        this.date = calendar.getTimeInMillis();
+        this.date = date.getTimeInMillis();
         this.journalId = journalId;
     }
 
@@ -32,5 +33,11 @@ public class Remainder {
 
     public void setDate(long date) {
         this.date = date;
+    }
+
+    public void save() {
+        DatabaseReference remainderCloudEndPoint = FirebaseDatabase.getInstance().getReference().child(REMAINDER_DATABASE_TABLE);
+        this.remainderId = remainderCloudEndPoint.push().getKey();
+        remainderCloudEndPoint.child(this.remainderId).setValue(this);
     }
 }
