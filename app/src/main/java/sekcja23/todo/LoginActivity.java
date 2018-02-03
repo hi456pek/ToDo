@@ -1,9 +1,11 @@
 package sekcja23.todo;
 
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,7 +55,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         public void onAuthentication(Credentials credentials) {
             // Login Success response
-            //setContentView(R.layout.activity_home);
             String idToken = credentials.getIdToken();
             UsersAPIClient usersClient = new UsersAPIClient(auth0, idToken);
             AuthenticationAPIClient authClient = new AuthenticationAPIClient(auth0);
@@ -66,6 +67,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             Intent i = new Intent(getApplicationContext(), HomeActivity.class);
                             String userEmail = userInfo.getEmail();
                             i.putExtra("userEmail", userEmail);
+
+                            SharedPreferences settings = getApplicationContext().getSharedPreferences("ToDoPreferences", 0);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putString("CurrentUser", userInfo.getId());
+                            editor.apply();
+
+                            i.putExtra("userId", userInfo.getId());
                             startActivity(i);
                         }
 

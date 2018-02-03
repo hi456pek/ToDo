@@ -56,6 +56,8 @@ public class JournalEntry {
         this.content = content;
     }
 
+    public void setUserId(String userId) { this.userId = userId; }
+
     //Gettery
     public String getJournalId() { return this.journalId; }
 
@@ -63,12 +65,15 @@ public class JournalEntry {
 
     public String getContent() { return this.content; }
 
+    public String getUserId() { return this.userId; }
+
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("journalId", journalId);
         result.put("title", title);
         result.put("content", content);
         result.put("dateModified", dateModified);
+        result.put("userId", userId);
 
         return result;
     }

@@ -1,18 +1,24 @@
 package sekcja23.todo;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +37,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import sekcja23.todo.Adapters.JournalAdapter;
@@ -45,6 +54,11 @@ public class HomeActivity extends AppCompatActivity
     private static final String DATABASE_TABLE = "journalentris";
     private static final String TASK_ID = "TaskId";
     private static final String EMAIL_ADDRES = "userEmail";
+
+    //Zmienne na potrzeby obsługi aparatu
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private Bitmap mImageBitmap;
+    private String mCurrentPhotoPath;
 
     //Referencja do bazy
     private DatabaseReference mDatabase;
@@ -93,19 +107,23 @@ public class HomeActivity extends AppCompatActivity
         //Pobieranie danych
         journalCloudEndPoint.addValueEventListener(new ValueEventListener() {
 
+            SharedPreferences settings = getApplicationContext().getSharedPreferences("ToDoPreferences", 0);
+            String currentUserId = settings.getString("CurrentUser", "");
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                journalEntries = new ArrayList<>();
                 for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
                     JournalEntry note = noteSnapshot.getValue(JournalEntry.class);
 
-                    //Dodanie pobranych zadań do listy
-                    journalEntries.add(note);
+                    if(note.getUserId() != null && note.getUserId().equals(currentUserId)) {
+                        //Dodanie pobranych zadań do listy
+                        journalEntries.add(note);
+                    }
 
                     //Wyświetlenie zadań w ListView
+                    ArrayAdapter adapter = new JournalAdapter(cont, R.layout.journal_item, journalEntries);
+                    journalsList.setAdapter(adapter);
                 }
-                ArrayAdapter adapter = new JournalAdapter(cont, R.layout.journal_item, journalEntries);
-                journalsList.setAdapter(adapter);
             }
 
             //Metoda do celów diagnostycznych
@@ -114,20 +132,22 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        //Obsługa dotknięcia przycisku dodawania zadania
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener((View v) -> {
             Intent nextScreen = new Intent(getApplicationContext(), AddNewTaskActivity.class);
             startActivity(nextScreen);
         });
 
+        //Obsługa dotknięcia elementu listy
         journalsList.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
             JournalEntry entry = (JournalEntry) journalsList.getItemAtPosition(position);
-            Intent nextScreen = new Intent(getApplicationContext(), TaskDetailsActivity.class);
-            if (entry.getJournalId() != null) {
-                nextScreen.putExtra(TASK_ID, entry.getJournalId());
-            }
-            startActivityForResult(nextScreen, 100);
 
+            if(entry != null) {
+                Intent nextScreen = new Intent(getApplicationContext(), TaskDetailsActivity.class);
+                nextScreen.putExtra(TASK_ID, entry.getJournalId());
+                startActivityForResult(nextScreen, 100);
+            }
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -187,10 +207,21 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            takePictureIntent.putExtra("android.intent.extra.quickCapture", true);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(takePictureIntent, 1);
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.putExtra("android.intent.extra.quickCapture",true);
+            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                // Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+                    // Error occurred while creating the File
+                }
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                    startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+                }
             }
         } else if (id == R.id.nav_slideshow) {
             Intent nextScreen = new Intent(getApplicationContext(), HomeActivity.class);
@@ -208,43 +239,43 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-    //Metoda do pobierania zdjęcia z pamięci telefonu
-    private void loadImageFromStorage(String path) {
-        try {
-            File f = new File(path, "todo.jpg");
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
-            //ImageView img=(ImageView)findViewById(R.id.imgPicker);
-            //img.setImageBitmap(b);
-            Intent nextScreen = new Intent(getApplicationContext(), PhotoActivity.class);
+    //Create temporary image file
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  // prefix
+                ".jpg",         // suffix
+                storageDir      // directory
+        );
 
-            //Compress bitmap
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            b.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] bytes = stream.toByteArray();
-
-            nextScreen.putExtra("imageBitmapCompressed", bytes);
-            startActivity(nextScreen);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            Intent nextScreen = new Intent(getApplicationContext(), PhotoActivity.class);
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            try {
+                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
 
-            //Compress bitmap
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] bytes = stream.toByteArray();
+                //Compress bitmap
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] bytes = stream.toByteArray();
 
-            nextScreen.putExtra("imageBitmapCompressed", bytes);
-            startActivity(nextScreen);
+                //Open preview
+                Intent nextScreen = new Intent(getApplicationContext(), PhotoActivity.class);
+                nextScreen.putExtra("imageBitmapCompressed", bytes);
+                startActivity(nextScreen);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
-
 }
