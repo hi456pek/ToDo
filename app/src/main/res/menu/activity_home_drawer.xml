@@ -31,4 +31,12 @@
         </menu>
     </item>
 
+    <item android:title="Konto">
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_delete_white_24dp"
+                android:title="Wyloguj się" />
+        </menu>
+    </item>
 </menu>

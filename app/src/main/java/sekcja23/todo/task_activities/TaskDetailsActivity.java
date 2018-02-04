@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -99,6 +100,11 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
                 newModel.setDateModified(new GregorianCalendar().getTimeInMillis());
                 newModel.setContent(this.commentField.getText().toString());
                 newModel.setTitle(this.titleField.getText().toString());
+
+                //Przypisanie ID użytkownika
+                SharedPreferences settings = getApplicationContext().getSharedPreferences("ToDoPreferences", 0);
+                String currentUserId = settings.getString("CurrentUser", "");
+                newModel.setUserId(currentUserId);
 
                 this.referenceToModel.updateChildren(newModel.toMap());
                 Intent nextScreen = new Intent(getApplicationContext(), HomeActivity.class);
