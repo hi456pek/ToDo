@@ -55,7 +55,6 @@ public class AddonAdapter extends ArrayAdapter<Addon> {
         holder.remove = new Button(context);
         holder.remove.setOnClickListener((View view) -> {
             data.remove(position);
-
         });
 
         return row;

@@ -145,7 +145,6 @@ public class AddNewTaskActivity extends AppCompatActivity {
     protected void prepareDialogs() {
         this.addReminderDialog = new RemainderDialog(this, getLayoutInflater(), this.newTaskKey);
         this.locationDialog = new LocationDialog(this, getLayoutInflater(), this.newTaskKey);
-
     }
 
     protected void upBarButtonsFunctions() {
@@ -164,7 +163,6 @@ public class AddNewTaskActivity extends AppCompatActivity {
         this.addLocationButton.setOnClickListener((View v) -> {
             this.locationDialog.show();
             this.locationDialog.setOnDismissListener(dialogInterface -> {
-
             });
         });
 
@@ -177,10 +175,8 @@ public class AddNewTaskActivity extends AppCompatActivity {
         });
     }
 
-
     protected void finishActivity() {
         Intent nextScreen = new Intent(getApplicationContext(), HomeActivity.class);
         startActivityForResult(nextScreen, 100);
     }
-
 }

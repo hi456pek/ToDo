@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import com.google.firebase.database.DataSnapshot;
@@ -21,8 +22,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.GregorianCalendar;
 
+import sekcja23.todo.Adapters.AddonAdapter;
 import sekcja23.todo.HomeActivity;
+import sekcja23.todo.Models.Addon;
 import sekcja23.todo.Models.JournalEntry;
+import sekcja23.todo.Models.Remainder;
 import sekcja23.todo.PhotoDetailActivity;
 import sekcja23.todo.R;
 
@@ -74,18 +78,35 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
 
     protected void initTaskData() {
         String taskId = getIntent().getStringExtra(TASK_ID);
-        if (taskId != null)
+        if (taskId != null) {
             this.referenceToModel.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     taskDetailsModel = dataSnapshot.getValue(JournalEntry.class);
                     fillEditText();
+
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                 }
             });
+            this.remainderCloudEndPoint.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Remainder remainder = snapshot.getValue(Remainder.class);
+                        addonsEntries.add(remainder);
+                        ArrayAdapter adapter = new AddonAdapter(context, R.layout.addon_item, addonsEntries);
+                        addonsList.setAdapter(adapter);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
     }
 
     protected void setButtonsOnClickFunction() {
@@ -98,6 +119,10 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
                 newModel.setDateModified(new GregorianCalendar().getTimeInMillis());
                 newModel.setContent(this.commentField.getText().toString());
                 newModel.setTitle(this.titleField.getText().toString());
+
+                for (Addon item : this.addonsEntries) {
+                    item.save();
+                }
 
                 this.referenceToModel.updateChildren(newModel.toMap());
                 Intent nextScreen = new Intent(getApplicationContext(), HomeActivity.class);
@@ -155,7 +180,6 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
         {
             e.printStackTrace();
         }
-
     }
 
     @Override
