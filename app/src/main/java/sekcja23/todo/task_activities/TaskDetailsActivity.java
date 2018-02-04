@@ -7,8 +7,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,11 +23,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.GregorianCalendar;
 
-import sekcja23.todo.Adapters.AddonAdapter;
 import sekcja23.todo.HomeActivity;
-import sekcja23.todo.Models.Addon;
 import sekcja23.todo.Models.JournalEntry;
-import sekcja23.todo.Models.Remainder;
+import sekcja23.todo.PhotoActivity;
 import sekcja23.todo.PhotoDetailActivity;
 import sekcja23.todo.R;
 
@@ -44,7 +43,6 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
     // Controls
     protected Button modifyButton;
     protected Button removeButton;
-
 
     // Data models
     protected JournalEntry taskDetailsModel;
@@ -70,7 +68,6 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
         this.modifyButton = findViewById(MODIFY_BUTTON_CONTROL);
         this.removeButton = findViewById(REMOVE_BUTTON_CONTROL);
 
-        this.buttonsBar.setVisibility(View.INVISIBLE);
         this.addButton.setVisibility(View.INVISIBLE);
         this.modifyButton.setVisibility(View.VISIBLE);
         this.removeButton.setVisibility(View.VISIBLE);
@@ -78,13 +75,13 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
 
     protected void initTaskData() {
         String taskId = getIntent().getStringExtra(TASK_ID);
-        if (taskId != null) {
+        Log.i("TaskID => ", taskId);
+        if (taskId != null)
             this.referenceToModel.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     taskDetailsModel = dataSnapshot.getValue(JournalEntry.class);
                     fillEditText();
-
                 }
 
                 @Override
@@ -111,7 +108,6 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
 
     protected void setButtonsOnClickFunction() {
         this.modifyButton.setOnClickListener((View v) -> {
-            this.buttonsBar.setVisibility(View.VISIBLE);
             this.setEnabledTextFields(true);
             this.modifyButton.setText(getResources().getText(SAVE_STRING));
             this.modifyButton.setOnClickListener((View view) -> {
@@ -123,6 +119,11 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
                 for (Addon item : this.addonsEntries) {
                     item.save();
                 }
+
+                //Przypisanie ID użytkownika
+                SharedPreferences settings = getApplicationContext().getSharedPreferences("ToDoPreferences", 0);
+                String currentUserId = settings.getString("CurrentUser", "");
+                newModel.setUserId(currentUserId);
 
                 this.referenceToModel.updateChildren(newModel.toMap());
                 Intent nextScreen = new Intent(getApplicationContext(), HomeActivity.class);
@@ -180,6 +181,7 @@ public class TaskDetailsActivity extends AddNewTaskActivity {
         {
             e.printStackTrace();
         }
+
     }
 
     @Override

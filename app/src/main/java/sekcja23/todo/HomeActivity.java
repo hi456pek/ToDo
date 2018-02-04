@@ -232,6 +232,9 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+        } else if (id == R.id.nav_logout) {
+            Intent nextScreen = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(nextScreen);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
