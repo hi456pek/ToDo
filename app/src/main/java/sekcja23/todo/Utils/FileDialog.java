@@ -16,7 +16,7 @@ import java.util.Calendar;
 import sekcja23.todo.Models.Remainder;
 import sekcja23.todo.R;
 
-public class RemainderDialog {
+public class FileDialog {
     protected static final int ADD_REMAINDER_DIALOG_LAYOUT = R.layout.remainder_dialog;
 
     // Dialog controls
@@ -43,7 +43,7 @@ public class RemainderDialog {
     protected TimePickerDialog timePickerDialog;
 
 
-    public RemainderDialog(Context context, LayoutInflater layoutInflater, String journalId) {
+    public FileDialog(Context context, LayoutInflater layoutInflater, String journalId) {
         this.layoutInflater = layoutInflater;
         this.today = Calendar.getInstance();
         this.remainderDate = Calendar.getInstance();
@@ -58,6 +58,7 @@ public class RemainderDialog {
         builder.setView(view)
                 .setPositiveButton(ADD_BUTTON_TEXT, (DialogInterface dialog, int id) -> {
                     this.remainder = this.createReminder(journalId);
+
                     dialog.dismiss();
                 })
                 .setNegativeButton(CANCEL_BUTTON_TEXT, (DialogInterface dialog, int id) -> dialog.cancel());
@@ -76,7 +77,8 @@ public class RemainderDialog {
         this.dateControl.setOnClickListener((View view) -> {
             this.datePickerDialog = new DatePickerDialog(this.context, (DatePicker datePicker, int year, int month, int day) -> {
                 this.remainderDate.set(year, month, day);
-                this.dateControl.setText(Remainder.dateFormat.format(remainderDate.getTime()));
+                String date = day + "-" + month + "-" + year;
+                this.dateControl.setText(date);
                 this.datePickerDialog.dismiss();
             }, this.today.get(Calendar.YEAR), this.today.get(Calendar.MONTH), this.today.get(Calendar.DAY_OF_MONTH));
             this.datePickerDialog.show();
@@ -86,7 +88,8 @@ public class RemainderDialog {
             this.timePickerDialog = new TimePickerDialog(this.context, (TimePicker timePicker, int hours, int minutes) -> {
                 this.remainderDate.set(Calendar.HOUR, hours);
                 this.remainderDate.set(Calendar.MINUTE, minutes);
-                this.timeControl.setText(Remainder.timeFormat.format(remainderDate.getTime()));
+                String time = hours + ":" + minutes;
+                this.timeControl.setText(time);
                 this.timePickerDialog.dismiss();
             }, 0, 0, true);
             this.timePickerDialog.show();
@@ -95,6 +98,7 @@ public class RemainderDialog {
 
     protected Remainder createReminder(String journalId) {
         return new Remainder(this.remainderDate, journalId);
+
     }
 
     public void show() {
