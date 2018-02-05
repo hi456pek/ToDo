@@ -48,14 +48,16 @@ import sekcja23.todo.Models.JournalEntry;
 import sekcja23.todo.task_activities.AddNewTaskActivity;
 import sekcja23.todo.task_activities.TaskDetailsActivity;
 
+//Klasa obsługująca ekran główny aplikacji wyświetlający listę zadań.
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    //Stałe łańcuchy znaków.
     private static final String DATABASE_TABLE = "journalentris";
     private static final String TASK_ID = "TaskId";
     private static final String EMAIL_ADDRES = "userEmail";
 
-    //Zmienne na potrzeby obsługi aparatu
+    //Zmienne na potrzeby obsługi aparatu.
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private String mCurrentPhotoPath;
@@ -63,48 +65,113 @@ public class HomeActivity extends AppCompatActivity
     //Referencja do bazy
     private DatabaseReference mDatabase;
 
-    //Referencja do czegoś w rodzaju tabeli w bazie
+    //Referencja do czegoś w rodzaju tabeli w bazie.
     private DatabaseReference journalCloudEndPoint;
 
     //Lista wpisów
     private ArrayList<JournalEntry> journalEntries;
 
-    //Metoda seed
-    private void addInitialDataToFirebase() {
-        List<JournalEntry> sampleJournalEntries = JournalEntry.getSampleJournalEntries();
-        for (JournalEntry journalEntry : sampleJournalEntries) {
-            String key = journalCloudEndPoint.push().getKey();
-            journalEntry.setJournalId(key);
-            journalCloudEndPoint.child(key).setValue(journalEntry);
-        }
-    }
+    //Kontrolka listy w widoku
+    private ListView journalsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
+        //Inicjalizacja komunikacji z bazą danych Firebase.
+        initDataBase();
+
+        //Incijalizacja listy na potrzeby wyświetlania w widoku.
+        journalEntries = new ArrayList<>();
+
+        //Pobieranie danych
+        getJournalData();
+
+        //Obsługa dotknięcia przycisku dodawania zadania.
+        goToAddNewTask();
+
+        //Obsługa dotknięcia elementu listy.
+        goToTaskDetails();
+
+        //Inicjalizacja menu bocznego.
+        initDrawerLayout();
+
+        //Ustawienie w widoku menu adresu e-mail aktualnie zalogowanego użytkownika.
+        setUserEmailInNavigationView();
+    }
+
+    //Obsługa dotknięcia przycisku dodawania zadania.
+    private void goToAddNewTask()
+    {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener((View v) -> {
+            Intent nextScreen = new Intent(getApplicationContext(), AddNewTaskActivity.class);
+            startActivity(nextScreen);
+        });
+    }
+
+    //Obsługa dotknięcia elementu listy.
+    private void goToTaskDetails()
+    {
+        journalsList.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
+            JournalEntry entry = (JournalEntry) journalsList.getItemAtPosition(position);
+
+            if(entry != null) {
+                Intent nextScreen = new Intent(getApplicationContext(), TaskDetailsActivity.class);
+                nextScreen.putExtra(TASK_ID, entry.getJournalId());
+                startActivityForResult(nextScreen, 100);
+            }
+        });
+    }
+
+    //Ustawienie w widoku menu adresu e-mail aktualnie zalogowanego użytkownika.
+    private void setUserEmailInNavigationView()
+    {
+        Intent myIntent = getIntent();
+        String userEmail = myIntent.getStringExtra(EMAIL_ADDRES);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
+        View hView = navigationView.getHeaderView(0);
+        TextView nav_user = hView.findViewById(R.id.userEmailTextView);
+        nav_user.setText(userEmail);
+
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    //Inicjalizacja komunikacji z bazą danych Firebase.
+    private void initDataBase()
+    {
         //Instancja bazy
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //Instancja czegoś w rodzaju tabeli w bazie
         journalCloudEndPoint = mDatabase.child(DATABASE_TABLE);
+    }
 
-        //Dodanie początkowego zadania do bazy - już zrobione dlatego zakomentowane. Nie odkomentowywać.
-        //addInitialDataToFirebase();
+    //Inicjalizacja menu bocznego.
+    private void initDrawerLayout()
+    {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    //Metoda pobierająca listę zadań.
+    private void getJournalData()
+    {
         //Referencja na ListView z zadaniami w widoku
-        final ListView journalsList = (findViewById(R.id.journalsList));
+        journalsList = (findViewById(R.id.journalsList));
 
         //Kontekst tego widoku na potrzeby ListView
         final Context cont = this;
 
-        //Incijalizacja listy na potrzeby wyświetlania w widoku
-        journalEntries = new ArrayList<>();
-
-        //Pobieranie danych
         journalCloudEndPoint.addValueEventListener(new ValueEventListener() {
 
             SharedPreferences settings = getApplicationContext().getSharedPreferences("ToDoPreferences", 0);
@@ -131,43 +198,9 @@ public class HomeActivity extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-
-        //Obsługa dotknięcia przycisku dodawania zadania
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener((View v) -> {
-            Intent nextScreen = new Intent(getApplicationContext(), AddNewTaskActivity.class);
-            startActivity(nextScreen);
-        });
-
-        //Obsługa dotknięcia elementu listy
-        journalsList.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
-            JournalEntry entry = (JournalEntry) journalsList.getItemAtPosition(position);
-
-            if(entry != null) {
-                Intent nextScreen = new Intent(getApplicationContext(), TaskDetailsActivity.class);
-                nextScreen.putExtra(TASK_ID, entry.getJournalId());
-                startActivityForResult(nextScreen, 100);
-            }
-        });
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        Intent myIntent = getIntent();
-        String userEmail = myIntent.getStringExtra(EMAIL_ADDRES);
-
-        NavigationView navigationView = findViewById(R.id.nav_view);
-
-        View hView = navigationView.getHeaderView(0);
-        TextView nav_user = hView.findViewById(R.id.userEmailTextView);
-        nav_user.setText(userEmail);
-
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
+    //Obsługa sprzętowego przycisku wstecz.
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -242,7 +275,7 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-    //Create temporary image file
+    //Tworzenie tymczasowego pliku zdjęcia w pamięci urządzenia.
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -260,18 +293,19 @@ public class HomeActivity extends AppCompatActivity
         return image;
     }
 
+    //Reakcja na zrobienie zdjęcia.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             try {
                 mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
 
-                //Compress bitmap
+                //Skompresuj bitmapę przed przesłaniem do podglądu zdjęcia
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] bytes = stream.toByteArray();
 
-                //Open preview
+                //Otwórz podgląd z możliwością rysowania po zdjęciu
                 Intent nextScreen = new Intent(getApplicationContext(), PhotoActivity.class);
                 nextScreen.putExtra("imageBitmapCompressed", bytes);
                 startActivity(nextScreen);

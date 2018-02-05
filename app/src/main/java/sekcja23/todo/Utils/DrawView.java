@@ -71,9 +71,7 @@ public class DrawView extends View {
     }
     private void touch_up() {
         mPath.lineTo(mX, mY);
-        // commit the path to our offscreen
         mCanvas.drawPath(mPath, mPaint);
-        // kill this so we don't double draw
         mPath.reset();
     }
 
@@ -99,6 +97,7 @@ public class DrawView extends View {
         return true;
     }
 
+    //Metoda na potrzeby czyszczenia ekranu
     public void clear(){
         mBitmap.eraseColor(Color.TRANSPARENT);
         invalidate();

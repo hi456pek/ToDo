@@ -59,6 +59,7 @@ public class PhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
 
+        //Inicjalizacja komunikacji z bazą danych Firebase.
         initDataBase();
 
         //Włączenie możliwości rysowania
@@ -67,9 +68,8 @@ public class PhotoActivity extends AppCompatActivity {
         DrawView drawView = new DrawView(this);
         parent.addView(drawView);
 
-        Intent intent = getIntent(); // gets the previously created intent
-
         //Dekompresja zdjęcia
+        Intent intent = getIntent();
         byte[] bytes = intent.getByteArrayExtra("imageBitmapCompressed");
         Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
@@ -89,6 +89,7 @@ public class PhotoActivity extends AppCompatActivity {
         });
     }
 
+    //Inicjalizacja komunikacji z bazą danych Firebase.
     protected void initDataBase() {
         //Instancja bazy
         mDatabase =  FirebaseDatabase.getInstance().getReference();
@@ -97,6 +98,7 @@ public class PhotoActivity extends AppCompatActivity {
         journalCloudEndPoint = mDatabase.child(JOURNAL_DATABASE_TABLE);
     }
 
+    //Dodanie notatki zdjęciowej do bazy danych, a co za tym idzie do listy zadań w widoku głównym.
     private void addToTaskList(String timeStamp)
     {
         //Utworzenie klucza dla nowego wpisu w bazie
@@ -119,20 +121,17 @@ public class PhotoActivity extends AppCompatActivity {
         journalCloudEndPoint.child(key).setValue(journalEntry);
     }
 
+    //Obsługa przycisku zapisującego zdjęcie w pamięci wewnętrznej urządzenia.
     private String saveToInternalStorage(Bitmap bitmapImage, String timeStamp){
 
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        // Create imageDir
-
         String imageFileName = "ToDo_" + timeStamp + ".jpg";
         File mypath=new File(directory, imageFileName);
 
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,6 +166,7 @@ public class PhotoActivity extends AppCompatActivity {
         return directory.getAbsolutePath();
     }
 
+    //Obsługa aparatu urządzenia.
     private void handleCamera()
     {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -187,9 +187,8 @@ public class PhotoActivity extends AppCompatActivity {
         }
     }
 
-    //Create temporary image file
+    //Tworzenie tymczasowego pliku zdjęcia w pamięci urządzenia na potrzeby obsługi aparatu.
     private File createImageFile() throws IOException {
-        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(
@@ -200,7 +199,6 @@ public class PhotoActivity extends AppCompatActivity {
                 storageDir      // directory
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
     }

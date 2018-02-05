@@ -20,9 +20,8 @@ public class PhotoDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent intent = getIntent(); // gets the previously created intent
-
         //Dekompresja zdjęcia
+        Intent intent = getIntent();
         byte[] bytes = intent.getByteArrayExtra("imageBitmapCompressed");
         Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 

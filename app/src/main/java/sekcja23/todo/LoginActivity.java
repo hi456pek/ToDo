@@ -24,6 +24,7 @@ import com.auth0.android.management.UsersAPIClient;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 
+//Klasa obsługująca ekran logowania do aplikacji.
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     private Lock lock = null;
