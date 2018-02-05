@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import sekcja23.todo.Adapters.AddonAdapter;
 import sekcja23.todo.HomeActivity;
@@ -24,6 +25,7 @@ import sekcja23.todo.Models.Addon;
 import sekcja23.todo.Models.JournalEntry;
 import sekcja23.todo.Models.Remainder;
 import sekcja23.todo.R;
+import sekcja23.todo.Utils.FileDialog;
 import sekcja23.todo.Utils.LocationDialog;
 import sekcja23.todo.Utils.RemainderDialog;
 
@@ -62,6 +64,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
     //Dialogs
     protected RemainderDialog addReminderDialog;
     protected LocationDialog locationDialog;
+    protected FileDialog fileDialog;
 
     //Referencja do bazy
     protected DatabaseReference mDatabase;
@@ -84,7 +87,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
         this.initDataBase();
         this.initControls();
         this.initAddButtonOnClickFunction();
-        this.prepareDialogs();
+        this.prepareDialogs(savedInstanceState);
         this.upBarButtonsFunctions();
     }
 
@@ -123,6 +126,7 @@ public class AddNewTaskActivity extends AppCompatActivity {
             //Inicjalizacja obiektu poprzez settery
             journalEntry.setTitle(this.titleField.getText().toString());
             journalEntry.setContent(this.commentField.getText().toString());
+            journalEntry.setDateCreated(new GregorianCalendar().getTimeInMillis());
             journalEntry.setJournalId(this.newTaskKey);
 
             SharedPreferences settings = getApplicationContext().getSharedPreferences("ToDoPreferences", 0);
@@ -142,9 +146,10 @@ public class AddNewTaskActivity extends AppCompatActivity {
         });
     }
 
-    protected void prepareDialogs() {
+    protected void prepareDialogs(Bundle bundle) {
         this.addReminderDialog = new RemainderDialog(this, getLayoutInflater(), this.newTaskKey);
-        this.locationDialog = new LocationDialog(this, getLayoutInflater(), this.newTaskKey);
+        this.locationDialog = new LocationDialog(this, getLayoutInflater(), this.newTaskKey, bundle);
+        this.fileDialog = new FileDialog(this, getLayoutInflater(), this.newTaskKey);
     }
 
     protected void upBarButtonsFunctions() {
@@ -167,11 +172,11 @@ public class AddNewTaskActivity extends AppCompatActivity {
         });
 
         this.addPhotoNoteButton.setOnClickListener((View v) -> {
-
+            this.fileDialog.show();
         });
 
         this.addVoiceNoteButton.setOnClickListener((View v) -> {
-
+            this.fileDialog.show();
         });
     }
 

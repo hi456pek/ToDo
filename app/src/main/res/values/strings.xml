@@ -37,6 +37,9 @@
 
     <string name="remainder_dialog_title">Dodaj przypominacz</string>
     <string name="location_dialog_title">Dodaj lokacje</string>
+    <string name="file_photo_dialog_title">Dodaj zdjęcie</string>
+    <string name="file_voice_dialog_title">Dodaj notatkę głosową</string>
+    <string name="path_to_file">Ścieżka do pliku</string>
     <string name="get_date">Wybierz datę</string>
     <string name="get_time">Wybierz godzinę</string>
     <string name="cancel_button">Anuluj</string>

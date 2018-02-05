@@ -2,13 +2,13 @@ package sekcja23.todo.Utils;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -30,13 +30,13 @@ public class LocationDialog {
 
     protected AlertDialog dialog;
 
-    public LocationDialog(Context context, LayoutInflater layoutInflater, String journalId) {
+    public LocationDialog(Context context, LayoutInflater layoutInflater, String journalId, Bundle bundle) {
         this.layoutInflater = layoutInflater;
         this.context = context;
 
         View view = this.layoutInflater.inflate(ADD_REMAINDER_DIALOG_LAYOUT, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
-        this.initControls(view.findViewById(MAP_VIEW));
+        this.initControls(view.findViewById(MAP_VIEW), bundle);
 
         builder.setTitle(LOCATION_DIALOG_TITLE);
         builder.setView(view)
@@ -48,16 +48,17 @@ public class LocationDialog {
     }
 
 
-    protected void initControls(MapView map) {
+    protected void initControls(MapView map, Bundle bundle) {
         this.mapView = map;
-        MapsInitializer.initialize(context);
-        map.getMapAsync(googleMap -> {
+        mapView.onCreate(bundle);
+        mapView.getMapAsync(googleMap -> {
             LatLng position = new LatLng(0, 0);
             googleMap.addMarker(new MarkerOptions().position(position).title("Yout title"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
             googleMap.getUiSettings().setZoomControlsEnabled(true);
             googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
         });
+
 
         this.initControlsOnClick();
     }

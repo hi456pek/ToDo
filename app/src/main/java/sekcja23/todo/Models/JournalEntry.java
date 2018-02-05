@@ -22,9 +22,6 @@ public class JournalEntry {
 
     private PositionOnMap positionOnMap;
 
-    private List<Remainder> remainderList;
-    private List<FileResource> resourceList;
-
     //Seed prostego dziennika zadań
     public static List<JournalEntry> getSampleJournalEntries() {
 
@@ -58,6 +55,14 @@ public class JournalEntry {
 
     public void setUserId(String userId) { this.userId = userId; }
 
+    public void setDateCreated(long dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public void setPositionOnMap(PositionOnMap positionOnMap) {
+        this.positionOnMap = positionOnMap;
+    }
+
     //Gettery
     public String getJournalId() { return this.journalId; }
 
@@ -67,12 +72,25 @@ public class JournalEntry {
 
     public String getUserId() { return this.userId; }
 
+    public long getDateCreated() {
+        return dateCreated;
+    }
+
+    public long getDateModified() {
+        return dateModified;
+    }
+
+    public PositionOnMap getPositionOnMap() {
+        return positionOnMap;
+    }
+
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("journalId", journalId);
         result.put("title", title);
         result.put("content", content);
         result.put("dateModified", dateModified);
+        result.put("dateCreated", dateCreated);
         result.put("userId", userId);
 
         return result;
